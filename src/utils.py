@@ -1,6 +1,27 @@
 import numpy as np
+import torch
+from torch.utils.data import Dataset
+import os
 
-# expects a numpy array representing an RGB image
+class MayaviDataset(Dataset):
+
+  def __init__(self, data_dir, transform=None):
+    self.data_dir = data_dir 
+    self.transform = transform
+
+  def __len__(self):
+    path, dirs, files = next(os.walk(self.data_dir))
+    file_count = len(files)
+    return file_count
+
+  def __getitem__(self, idx):
+    model = np.load(os.path.join(self.data_dir, '{}.npy'.format(str(idx))))
+
+    if self.transform:
+      model = self.transform(model)
+    
+    return model
+
 def create_noise(img, fract):
   corrupt_image = img.copy()
 
