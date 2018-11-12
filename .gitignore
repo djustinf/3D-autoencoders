@@ -1,5 +1,8 @@
 src/data/*
 src/mlp_img/*
+src/poles/*
+src/3D_mnist/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

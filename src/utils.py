@@ -1,8 +1,10 @@
 import numpy as np
+import h5py
 import torch
 from torch.utils.data import Dataset
 import os
 
+# Custom dataloader for custom Mayavi dataset we made
 class MayaviDataset(Dataset):
 
   def __init__(self, data_dir, transform=None):
@@ -16,6 +18,25 @@ class MayaviDataset(Dataset):
 
   def __getitem__(self, idx):
     model = np.load(os.path.join(self.data_dir, '{}.npy'.format(str(idx))))
+
+    if self.transform:
+      model = self.transform(model)
+    
+    return model
+
+# Custom dataloader for a 3D mnist dataset we found on Kaggle
+class Mnist3D(Dataset):
+
+  def __init__(self, data_dir, transform=None):
+    with h5py.File(data_dir, "r") as hf:    
+      self.data_dir = hf["X_train"][:]
+    self.transform = transform
+
+  def __len__(self):
+    return len(self.data_dir)
+
+  def __getitem__(self, idx):
+    model = np.reshape(self.data_dir[idx], (16, 16, 16))
 
     if self.transform:
       model = self.transform(model)

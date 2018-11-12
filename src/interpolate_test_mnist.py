@@ -29,18 +29,18 @@ dataset = MNIST('./data', transform=img_transform, download=True)
 model = Baseline(28*28, 128, 2, 4).cpu()
 model.load_state_dict(torch.load('./sim_autoencoder.pth'))
 
-img1, _ = dataset[0]
+img1, _ = dataset[14]
 img1 = img1.view(img1.size(0), -1)
-save_image(to_img(img1), './mlp_img/test_interpolate_1.png')
+save_image(to_img(img1), './mlp_img/test_interpolate_5.png')
 img1 = Variable(img1).cpu()
 output1 = model.encode(img1)
 
-img2, _ = dataset[1]
+img2, _ = dataset[15]
 img2 = img2.view(img2.size(0), -1)
-save_image(to_img(img2), './mlp_img/test_interpolate_2.png')
+save_image(to_img(img2), './mlp_img/test_interpolate_6.png')
 img2 = Variable(img2).cpu()
 output2 = model.encode(img2)
 
 interp = (0.5 * output1) + (0.5 * output2)
 output = model.decode(interp)
-save_image(to_img(output), './mlp_img/test_interpolate_interp.png')
+save_image(to_img(output), './mlp_img/test_interpolate_interp_56.png')
