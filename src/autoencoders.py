@@ -61,32 +61,28 @@ class Baseline(AutoBase):
     val = self.decoder(val)
     return val.cpu().data
 
-# Still broken for now, padding/strides need to be added to make the math work out correctly
 class ConvNet3D(AutoBase):
 
   def __init__(self):
     super(ConvNet3D, self).__init__()
 
     encoder_layers = []
-    encoder_layers.append(nn.Conv3d(16, 14, 3, stride=1))
+    encoder_layers.append(nn.Conv3d(3, 64, 3, stride=1))
     encoder_layers.append(nn.ReLU(True))
-    encoder_layers.append(nn.MaxPool3d(2, stride=2, padding=1)) # 8x8x8
-    encoder_layers.append(nn.Conv3d(8, 6, 3, stride=1))
+    encoder_layers.append(nn.MaxPool3d(2, stride=2))
+    encoder_layers.append(nn.Conv3d(64, 32, 3, stride=1))
     encoder_layers.append(nn.ReLU(True))
-    encoder_layers.append(nn.MaxPool3d(2, stride=2, padding=1)) # 4x4x4
-    encoder_layers.append(nn.Conv3d(4, 2, 3, stride=1))
+    encoder_layers.append(nn.MaxPool3d(2, stride=2))
 
     self.encoder = nn.Sequential(*encoder_layers)
 
     decoder_layers = []
-
-    decoder_layers.append(nn.ConvTranspose3d(2, 4, 3, stride=1))
-    decoder_layers.append(nn.MaxUnpool3d(2, stride=2, padding=1)) # 6x6x6
+    decoder_layers.append(nn.ConvTranspose3d(32, 64, 5, stride=2))
     decoder_layers.append(nn.ReLU(True))
-    decoder_layers.append(nn.ConvTranspose3d(6, 8, 3, stride=1))
-    decoder_layers.append(nn.MaxUnpool3d(2, stride=2, padding=1)) # 14x14x14
+    decoder_layers.append(nn.ConvTranspose3d(64, 32, 3, stride=2))
     decoder_layers.append(nn.ReLU(True))
-    decoder_layers.append(nn.ConvTranspose3d(14, 16, 3, stride=1))
+    decoder_layers.append(nn.ConvTranspose3d(32, 3, 2, stride=1))
+    decoder_layers.append(nn.ReLU(True))
 
     decoder_layers.append(nn.Tanh()) # figure out why the tanh matters here
 

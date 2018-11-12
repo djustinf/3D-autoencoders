@@ -30,6 +30,7 @@ model = Baseline(28*28, 128, 2, 4).cpu()
 model.load_state_dict(torch.load('./sim_autoencoder.pth'))
 
 img1, _ = dataset[14]
+print(img1)
 img1 = img1.view(img1.size(0), -1)
 save_image(to_img(img1), './mlp_img/test_interpolate_5.png')
 img1 = Variable(img1).cpu()

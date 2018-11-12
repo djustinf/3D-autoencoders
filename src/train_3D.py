@@ -19,11 +19,7 @@ num_epochs = 100
 batch_size = 128
 learning_rate = 1e-3
 
-img_transform = transforms.Compose([
-    transforms.ToTensor(),
-])
-
-dataset = Mnist3D('./3D_mnist/full_dataset_vectors.h5', transform=img_transform)
+dataset = Mnist3D('./3D_mnist/full_dataset_vectors.h5')
 dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
 model = ConvNet3D().cpu()

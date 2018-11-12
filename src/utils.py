@@ -1,4 +1,5 @@
 import numpy as np
+from matplotlib.pyplot import cm
 import h5py
 import torch
 from torch.utils.data import Dataset
@@ -29,19 +30,27 @@ class Mnist3D(Dataset):
 
   def __init__(self, data_dir, transform=None):
     with h5py.File(data_dir, "r") as hf:    
-      self.data_dir = hf["X_train"][:]
+      data = hf["X_train"][:]
+    
+    self.data_dir = np.zeros((data.shape[0], 4096, 3))
+
+    for x in range(self.data_dir.shape[0]):
+      self.data_dir[x] = add_extra_dims(data[x])
+    
+    self.data_dir = np.reshape(self.data_dir, (data.shape[0], 16, 16, 16, 3))
     self.transform = transform
 
   def __len__(self):
     return len(self.data_dir)
 
   def __getitem__(self, idx):
-    model = np.reshape(self.data_dir[idx], (16, 16, 16))
+    model = self.data_dir[idx]
+    model = np.swapaxes(model, 0, 3)
 
     if self.transform:
       model = self.transform(model)
     
-    return model
+    return torch.from_numpy(model)
 
 def create_noise(img, fract):
   corrupt_image = img.copy()
@@ -57,3 +66,8 @@ def create_noise(img, fract):
       corrupt_image[i][j] = img_max if (np.random.random() < 0.5) else img_min
 
   return corrupt_image
+
+def add_extra_dims(linear_model):
+    color_map = cm.ScalarMappable(cmap="hsv")
+    color_array = color_map.to_rgba(linear_model)[:,:-1]
+    return color_array
