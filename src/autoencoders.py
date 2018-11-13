@@ -67,7 +67,7 @@ class ConvNet3D(AutoBase):
     super(ConvNet3D, self).__init__()
 
     encoder_layers = []
-    encoder_layers.append(nn.Conv3d(3, 64, 3, stride=1))
+    encoder_layers.append(nn.Conv3d(4, 64, 3, stride=1))
     encoder_layers.append(nn.ReLU(True))
     encoder_layers.append(nn.MaxPool3d(2, stride=2))
     encoder_layers.append(nn.Conv3d(64, 32, 3, stride=1))
@@ -81,7 +81,7 @@ class ConvNet3D(AutoBase):
     decoder_layers.append(nn.ReLU(True))
     decoder_layers.append(nn.ConvTranspose3d(64, 32, 3, stride=2))
     decoder_layers.append(nn.ReLU(True))
-    decoder_layers.append(nn.ConvTranspose3d(32, 3, 2, stride=1))
+    decoder_layers.append(nn.ConvTranspose3d(32, 4, 2, stride=1))
     decoder_layers.append(nn.ReLU(True))
 
     decoder_layers.append(nn.Tanh()) # figure out why the tanh matters here

@@ -32,12 +32,12 @@ class Mnist3D(Dataset):
     with h5py.File(data_dir, "r") as hf:    
       data = hf["X_train"][:]
     
-    self.data_dir = np.zeros((data.shape[0], 4096, 3))
+    self.data_dir = np.zeros((data.shape[0], 4096, 4))
 
     for x in range(self.data_dir.shape[0]):
       self.data_dir[x] = add_extra_dims(data[x])
     
-    self.data_dir = np.reshape(self.data_dir, (data.shape[0], 16, 16, 16, 3))
+    self.data_dir = np.reshape(self.data_dir, (data.shape[0], 16, 16, 16, 4))
     self.transform = transform
 
   def __len__(self):
@@ -70,4 +70,7 @@ def create_noise(img, fract):
 def add_extra_dims(linear_model):
     color_map = cm.ScalarMappable(cmap="hsv")
     color_array = color_map.to_rgba(linear_model)[:,:-1]
-    return color_array
+    new_model = np.zeros((color_array.shape[0], 4))
+    for x in range(color_array.shape[0]):
+      new_model[x] = np.append(color_array[x], linear_model[x])
+    return new_model
