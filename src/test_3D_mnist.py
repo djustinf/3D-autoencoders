@@ -1,22 +1,29 @@
 import h5py
+import argparse
 import mayavi.mlab
-import numpy
+import numpy as np
 
-with h5py.File("./3D_mnist/full_dataset_vectors.h5", "r") as hf:    
-  X_train = hf["X_train"][:]
-  y_train = hf["y_train"][:]
-  X_test = hf["X_test"][:]
-  y_test = hf["y_test"][:]
+parse = argparse.ArgumentParser()
+parse.add_argument('-f', '--file', type=str, required=True, help='File path')
+parse.add_argument('-n', '--number', type=int, required=True, help='Model Number')
+args = vars(parse.parse_args())
+  
+model_file = args['file']
+num = args['number']
 
-data = X_train[0]
-data = numpy.reshape(data, (16, 16, 16))
-xx, yy, zz = numpy.where(data > 0)
-xxyyzz = zip(xx, yy, zz)
-for (xx, yy, zz) in xxyyzz:
-  mayavi.mlab.points3d(xx, yy, zz,
-                     mode="cube",
-                     color=(1, 0, 0),
-                     opacity=data[xx, yy, zz],
-                     scale_factor=1)
+with h5py.File(model_file, "r") as hf:
+  models = hf["models"][:]
+  data = models[num]
+  for xx in range(16):
+    for yy in range(16):
+      for zz in range(16):
+        color = data[xx, yy, zz]
+        opacity = float(max(color[3], 0))
+        color = (float(max(color[0], 0)), float(max(color[1], 0)), float(max(color[2], 0)))
+        mayavi.mlab.points3d(xx, yy, zz,
+                            mode="cube",
+                            color=color,
+                            opacity=opacity,
+                            scale_factor=1)
 
-mayavi.mlab.show()
+  mayavi.mlab.show()

@@ -24,15 +24,16 @@ for i in range(19):
     file_num += 1
 """
 
-data = (20, 20, 20)
-data = numpy.zeros(data)
-data[0:20, 0:1, 0:1] = 1
-
-xx, yy, zz = numpy.where(data == 1)
-
-mayavi.mlab.points3d(xx, yy, zz,
-                     mode="cube",
-                     color=(1, 0, 0),
-                     scale_factor=1)
+for xx in range(16):
+    for yy in range(16):
+        for zz in range(16):
+            color = output[xx, yy, zz]
+            opacity = max(color[3].item(), 0)
+            color = (max(color[0].item(), 0), max(color[1].item(), 0), max(color[2].item(), 0))
+            mayavi.mlab.points3d(xx, yy, zz,
+                                mode="cube",
+                                color=color,
+                                opacity=opacity,
+                                scale_factor=1)
 
 mayavi.mlab.show()

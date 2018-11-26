@@ -9,16 +9,21 @@ class AutoBase(nn.Module):
   __metaclass__ = ABCMeta
 
   @abstractmethod
+  def __init__(self):
+    super(AutoBase, self).__init__()
+
   def forward(self, val):
-    pass
+    val = self.encoder(val)
+    val = self.decoder(val)
+    return val
 
-  @abstractmethod
   def encode(self, val):
-    pass
+    val = self.encoder(val)
+    return val.cpu().data
 
-  @abstractmethod
   def decode(self, val):
-    pass
+    val = self.decoder(val)
+    return val.cpu().data
 
 class Baseline(AutoBase):
 
@@ -48,19 +53,6 @@ class Baseline(AutoBase):
 
     self.decoder = nn.Sequential(*decoder_layers)
 
-  def forward(self, val):
-    val = self.encoder(val)
-    val = self.decoder(val)
-    return val
-
-  def encode(self, val):
-    val = self.encoder(val)
-    return val.cpu().data
-
-  def decode(self, val):
-    val = self.decoder(val)
-    return val.cpu().data
-
 class ConvNet3D(AutoBase):
 
   def __init__(self):
@@ -87,16 +79,3 @@ class ConvNet3D(AutoBase):
     decoder_layers.append(nn.Tanh()) # figure out why the tanh matters here
 
     self.decoder = nn.Sequential(*decoder_layers)
-
-  def forward(self, val):
-    val = self.encoder(val)
-    val = self.decoder(val)
-    return val
-
-  def encode(self, val):
-    val = self.encoder(val)
-    return val.cpu().data
-
-  def decode(self, val):
-    val = self.decoder(val)
-    return val.cpu().data
