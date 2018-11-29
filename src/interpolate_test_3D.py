@@ -48,6 +48,6 @@ for x in range(num):
   output = np.swapaxes(output.numpy(), 0, 3)
   models.append(output)
 
-np.concatenate(models, axis=0)
+new_models = np.vstack(models)
 with h5py.File('./models.h5', 'w') as hf:
-  hf['models'] = models
+  hf['models'] = new_models
