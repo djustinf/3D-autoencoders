@@ -45,7 +45,7 @@ class Mnist3D(Dataset):
 
   def __getitem__(self, idx):
     model = self.data_dir[idx]
-    model = np.swapaxes(model, 0, 3)
+    #model = np.swapaxes(model, 0, 3)
 
     if self.transform:
       model = self.transform(model)
@@ -66,6 +66,20 @@ def create_noise(img, fract):
       corrupt_image[i][j] = img_max if (np.random.random() < 0.5) else img_min
 
   return corrupt_image
+
+def create_3D_noise(batch, fract):
+  corrupt_batch = batch.copy()
+
+  for i in range(batch.shape[0]):
+    for x in range(16):
+      for y in range(16):
+        vals = np.arange(16)
+        np.random.shuffle(vals)
+        noise = vals[:int(fract * 16)]
+        for j in noise:
+          corrupt_batch[i, x, y, j] = np.array([1,1,1,1]) if (np.random.random() < 0.5) else np.array([0,0,0,0])
+
+  return corrupt_batch
 
 def add_extra_dims(linear_model):
     color_map = cm.ScalarMappable(cmap="hsv")
