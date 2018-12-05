@@ -6,6 +6,7 @@ from autoencoders import Baseline
 from autoencoders import ConvNet3D
 from utils import MayaviDataset
 from utils import Mnist3D
+from utils import Sphere
 import mayavi.mlab
 import numpy as np
 import argparse
@@ -19,22 +20,37 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 
 parse = argparse.ArgumentParser()
+parse.add_argument('-s', '--spheres', action='store_true')
 parse.add_argument('-n', '--number', type=int, required=True, help='Number of models to generate')
+parse.add_argument('-a', '--autoencoder', type=str, required=True)
+parse.add_argument('-f', '--firstModel', type=int, required=True)
+parse.add_argument('-s', '--secModel', type=int, required=True)
+parse.add_argument('-o', '--outfile', type=str, required=True)
+parse.add_argument('-g', '--group', type=str, required=True)
 args = vars(parse.parse_args())
   
 num = args['number']
+spheres = args['spheres']
+autoencoder = args['autoencoder']
+first_model = args['firstModel']
+sec_model = args['secModel']
+outfile = args['outfile']
+group =args['group']
 
-dataset = Mnist3D('./3D_mnist/full_dataset_vectors.h5')
+if (spheres):
+  dataset = Sphere('./spheres.h5')
+else:
+  dataset = Mnist3D('./3D_mnist/full_dataset_vectors.h5')
 
 model = ConvNet3D().cpu()
-model.load_state_dict(torch.load('./3D_autoencoder.pth'))
+model.load_state_dict(torch.load(autoencoder))
 
-img1 = dataset[0].float()
+img1 = dataset[first_model].float()
 img1 = img1.view(1, 4, 16, 16, 16)
 img1 = Variable(img1).cpu()
 output1 = model.encode(img1)
 
-img2 = dataset[3].float()
+img2 = dataset[sec_model].float()
 img2 = img2.view(1, 4, 16, 16, 16)
 img2 = Variable(img2).cpu()
 output2 = model.encode(img2)
@@ -49,5 +65,5 @@ for x in range(num):
   models.append(output)
 
 new_models = np.vstack(models)
-with h5py.File('./models.h5', 'w') as hf:
-  hf['models'] = new_models
+with h5py.File(outfile, 'w') as hf:
+  hf[group] = new_models

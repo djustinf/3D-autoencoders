@@ -52,6 +52,29 @@ class Mnist3D(Dataset):
     
     return torch.from_numpy(model)
 
+# Custom dataloader for a sphere dataset
+class Sphere(Dataset):
+
+  def __init__(self, data_dir, transform=None):
+    with h5py.File(data_dir, "r") as hf:    
+      data = hf["spheres"][:]
+    
+    self.data_dir = data
+    
+    self.transform = transform
+
+  def __len__(self):
+    return len(self.data_dir)
+
+  def __getitem__(self, idx):
+    model = self.data_dir[idx]
+    #model = np.swapaxes(model, 0, 3)
+
+    if self.transform:
+      model = self.transform(model)
+    
+    return torch.from_numpy(model)
+
 def create_noise(img, fract):
   corrupt_image = img.copy()
 

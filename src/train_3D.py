@@ -6,6 +6,7 @@ from autoencoders import Baseline
 from autoencoders import ConvNet3D
 from utils import MayaviDataset
 from utils import Mnist3D
+from utils import Sphere
 from utils import create_3D_noise
 import numpy as np
 
@@ -22,14 +23,19 @@ batch_size = 128
 learning_rate = 1e-3
 
 parse = argparse.ArgumentParser()
+parse.add_argument('-s', '--spheres', action='store_true')
 parse.add_argument('-d', '--denoising' , action='store_true')
 parse.add_argument('-o', '--outfile', required=True)
 args = vars(parse.parse_args())
 
+spheres = args['spheres']
 denoising = args['denoising']
 outfile = args['outfile']
 
-dataset = Mnist3D('./3D_mnist/full_dataset_vectors.h5')
+if (spheres):
+  dataset = Sphere("./spheres.h5")
+else:
+  dataset = Mnist3D('./3D_mnist/full_dataset_vectors.h5')
 dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
 model = ConvNet3D().cpu()
