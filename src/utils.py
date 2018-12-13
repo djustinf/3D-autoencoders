@@ -45,7 +45,7 @@ class Mnist3D(Dataset):
 
   def __getitem__(self, idx):
     model = self.data_dir[idx]
-    #model = np.swapaxes(model, 0, 3)
+    model = np.swapaxes(model, 0, 3)
 
     if self.transform:
       model = self.transform(model)
@@ -68,7 +68,7 @@ class Sphere(Dataset):
 
   def __getitem__(self, idx):
     model = self.data_dir[idx]
-    #model = np.swapaxes(model, 0, 3)
+    model = np.swapaxes(model, 0, 3)
 
     if self.transform:
       model = self.transform(model)

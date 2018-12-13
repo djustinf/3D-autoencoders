@@ -1,5 +1,6 @@
 import h5py
 import argparse
+from utils import create_3D_noise
 import mayavi.mlab
 import numpy as np
 

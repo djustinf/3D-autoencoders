@@ -47,7 +47,8 @@ for epoch in range(num_epochs):
     data = data.float()
 
     if (denoising):
-      corrupt_data = torch.from_numpy(create_3D_noise(data.numpy(), 0.15))
+      data = data.view(data.size(0), 16, 16, 16, 4)
+      corrupt_data = torch.from_numpy(create_3D_noise(data.numpy(), 0.10))
       corrupt_data = corrupt_data.view(corrupt_data.size(0), 4, 16, 16, 16)
       data = data.view(data.size(0), 4, 16, 16, 16)
       corrupt_data = Variable(corrupt_data).cpu()

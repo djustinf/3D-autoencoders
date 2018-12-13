@@ -64,6 +64,5 @@ for x in range(num):
   output = np.swapaxes(output.numpy(), 0, 3)
   models.append(output)
 
-new_models = np.vstack(models)
-with h5py.File(outfile, 'w') as hf:
-  hf[group] = new_models
+with h5py.File('./models.h5', 'w') as hf:
+  hf['models'] = models
